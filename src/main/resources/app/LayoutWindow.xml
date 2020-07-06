@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<window resource="app.LayoutWindow" name="Art Of Illusion">
+
+    <width>1280</width>
+    <height>1024</height>
+    <defaultCloseOperation>2</defaultCloseOperation>
+    <icon>app/ApplicationIcon.png</icon>
+    
+    <menu name="menu.file">
+        <menuitem name="menu.file.new" />
+        <menuitem separator="true"/>
+        <menuitem name="menu.file.exit" icon="app/quit.png" actionClass="app.actions.ExitAction"/>
+    </menu>
+    <menu name="menu.edit">
+        <menuitem name="menu.edit.undo" icon="menu.edit.undo.icon"/>
+        <menuitem name="menu.edit.redo" icon="app/redo.png"/>
+        <menuitem separator="true"/>
+        <menuitem name="menu.edit.cut"/>
+        <menuitem name="menu.edit.copy"/>
+        <menuitem name="menu.edit.paste"/>
+        <menuitem name="menu.edit.delete"/>
+        <menuitem separator="true"/>
+        <menuitem name="menu.edit.preferences" binding="editPreferences"/>
+    </menu>
+    <menu customClass="app.ToolsMenu" binding="toolsMenu"/>
+    <menu name="menu.help">
+    </menu>
+</window>
