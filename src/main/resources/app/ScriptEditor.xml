@@ -6,31 +6,29 @@ and open the template in the editor.
 -->
 
 
-<window resource="app.LayoutWindow" name="Art Of Illusion">
+<window resource="app.LayoutWindow" name="Groovy Script Editor">
 
-    <width>1280</width>
-    <height>1024</height>
+    <width>640</width>
+    <height>480</height>
     <defaultCloseOperation>2</defaultCloseOperation>
     <icon>app/ApplicationIcon.png</icon>
     
     <menu name="menu.file">
-        <menuitem name="menu.file.new" />
-        <menuitem separator="true"/>
-        <menuitem name="menu.file.exit" icon="app/quit.png" actionClass="app.actions.ExitAction"/>
+        <menuitem name="menu.file.new" actionClass="app.actions.ScriptEditorAction"/>
+        <menuitem name="menu.file.open" actionClass="app.actions.LoadScriptAction"/>
     </menu>
-    <menu name="menu.edit">
-        <menuitem name="menu.edit.undo" icon="menu.edit.undo.icon"/>
-        <menuitem name="menu.edit.redo" icon="app/redo.png"/>
+    <menu name="menu.edit" binding = "editMenu">
+        
+        <menuitem name="menu.edit.undo" icon="menu.edit.undo.icon" binding="undoMenuItem" shortcut="ctrl Z"/>
+        <menuitem name="menu.edit.redo" icon="app/redo.png"  binding="redoMenuItem" shortcut="ctrl shift Z"/>
         <menuitem separator="true"/>
         <menuitem name="menu.edit.cut" shortcut="menu.edit.cut.shortcut"/>
         <menuitem name="menu.edit.copy" shortcut="menu.edit.copy.shortcut"/>
         <menuitem name="menu.edit.paste" shortcut="menu.edit.paste.shortcut"/>
         <menuitem name="menu.edit.delete"/>
+        
         <menuitem separator="true"/>
-        <menuitem name="menu.edit.preferences" binding="editPreferences"/>
+        <menuitem name="menu.script.run" binding="runScript" shortcut="menu.script.run.shortcut"/>
     </menu>
-    
-    <menu customClass="app.ToolsMenu" binding="toolsMenu"/>
-    <menu name="menu.help">
-    </menu>
+
 </window>

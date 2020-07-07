@@ -5,9 +5,10 @@
  */
 package app.actions;
 
-import java.awt.PopupMenu;
+import app.ScriptEditor;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -16,11 +17,14 @@ import javax.swing.AbstractAction;
 public class ScriptEditorAction extends AbstractAction {
 
     public ScriptEditorAction() {
+        super("Script Editor");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+        SwingUtilities.invokeLater(() -> {
+            new ScriptEditor().setVisible(true);
+        });
     }
     
 }

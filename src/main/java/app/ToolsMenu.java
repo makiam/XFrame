@@ -5,6 +5,7 @@
  */
 package app;
 
+import app.actions.ScriptEditorAction;
 import javax.swing.JMenu;
 
 /**
@@ -12,8 +13,9 @@ import javax.swing.JMenu;
  * @author MaksK
  */
 public class ToolsMenu extends JMenu {
-    
+
     public ToolsMenu() {
         super("Tools");
+        this.add(new ScriptEditorAction());
     }
 }

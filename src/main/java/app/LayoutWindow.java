@@ -5,7 +5,6 @@
  */
 package app;
 
-import app.actions.ScriptEditorAction;
 import app.xframe.XFrame;
 import java.util.Locale;
 import javax.swing.JMenu;
@@ -25,8 +24,6 @@ public class LayoutWindow extends XFrame {
     @Override
     protected void frameInit() {
         super.frameInit();
-
-        toolsMenu.add(new ScriptEditorAction());
     }
 
     @Override

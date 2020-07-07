@@ -249,6 +249,9 @@ public class XFrame extends JFrame {
         private static final Logger logger = Logger.getLogger(MenuItemNode.class.getName());
         
         @XStreamAsAttribute
+        public String shortcut;
+        
+        @XStreamAsAttribute
         public boolean separator;
         
         @XStreamAsAttribute
@@ -278,7 +281,7 @@ public class XFrame extends JFrame {
                 icon = new ImageIcon(Thread.currentThread().getContextClassLoader().getResource(iconName));
             }
             String mnemonic = node.name == null ? null : bundle.containsKey(node.name + ".mnemonic") ? bundle.getString(node.name + ".mnemonic") : null;
-            String accelerator = node.name == null ? null : bundle.containsKey(node.name + ".shortcut") ? bundle.getString(node.name + ".shortcut") : null;
+            String accelerator = node.shortcut == null ? null : bundle.containsKey(node.shortcut) ? bundle.getString(node.shortcut) : null;
             
             JMenuItem result = node.menu == null ? new JMenuItem() : new JMenu();
             if(action.isPresent()) result.setAction(action.get());
