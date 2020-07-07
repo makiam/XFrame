@@ -1,2 +1,2 @@
 # XFrame
-Declarative View Demo
+Declarative View Definition Demo
