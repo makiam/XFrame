@@ -14,7 +14,7 @@ and open the template in the editor.
     <icon>app/ApplicationIcon.png</icon>
     
     <menu name="menu.file">
-        <menuitem name="menu.file.new" />
+        <menuitem name="menu.file.new" actionClass="app.actions.NewViewAction" shortcut="control N"/>
         <menuitem separator="true"/>
         <menuitem name="menu.file.exit" icon="app/quit.png" actionClass="app.actions.ExitAction"/>
     </menu>

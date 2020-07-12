@@ -6,20 +6,28 @@
 package app;
 
 import app.xframe.XFrame;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 
 
 import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.undo.UndoableEdit;
+import lombok.extern.log4j.Log4j;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -28,30 +36,59 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  *
  * @author MaksK
  */
+@Log4j
 @XFrame.Resource(path = "app/ScriptEditor.xml")
 public class ScriptEditor extends XFrame {
     
     private JMenuItem runScript;
-    private JMenu editMenu;
+    
+    private JMenuItem saveMenuItem;
+    private JMenuItem saveAsMenuItem;
     
     private JMenuItem undoMenuItem;
     private JMenuItem redoMenuItem;
+    private JMenuItem cutMenuItem;
+    private JMenuItem copyMenuItem;
+    private JMenuItem pasteMenuItem;
+    private JMenuItem deleteMenuItem;
+    
+    private JMenuItem selectAllMenuItem;
     
     
     private RSyntaxTextArea textArea;
+    private TextArea output;
     
+    
+    private String backup = "";
+    private Path path;
     
     public ScriptEditor() {
         super();
     }
     
     public ScriptEditor(Path path) {
-        this(); 
+        this();         
         try {
-            textArea.setText(new String(Files.readAllBytes(path)));
+            this.path = path;
+            backup = new String(Files.readAllBytes(path));
+            textArea.setText(backup);
+            this.setTitle("Script Editor: " + path.getFileName());
         } catch(IOException ioe) {
         }
         
+    }
+    
+    void close(WindowEvent event) {
+        log.info("Script Editor Is about to be closed");
+
+        if(textArea.getText().equals(backup)) {
+            this.dispose();
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, "Script is modified. Close window?");
+        if(confirm != JOptionPane.YES_OPTION) return;
+        this.dispose();
     }
     
     
@@ -59,51 +96,74 @@ public class ScriptEditor extends XFrame {
     protected void frameInit() {
         super.frameInit();
 
+        WindowAdapter wa = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent event) {
+                ScriptEditor.this.close(event);
+            }            
+        };
+        this.addWindowListener(wa);
         
         textArea = new RSyntaxTextArea(20, 60);
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_GROOVY);
         textArea.setCodeFoldingEnabled(true);
-
-        textArea.getDocument().addUndoableEditListener(this::undoListener);
+ 
         RTextScrollPane sp = new RTextScrollPane(textArea);
         
-        JPanel cp = new JPanel(new BorderLayout());
-        cp.add(sp);
-        setContentPane(cp);
+
         
+        JSplitPane jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sp, output = new TextArea());
+        setContentPane(jsp);
+        output.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         pack();
         setLocationRelativeTo(null);
-        
+         
         runScript.addActionListener(this:: runScriptAction);
-        undoMenuItem.addActionListener(this::undoAction);
-        undoMenuItem.setEnabled(textArea.canUndo());
-        redoMenuItem.addActionListener(this::redoAction);
-        redoMenuItem.setEnabled(textArea.canRedo());
+        undoMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.UNDO_ACTION));
+        redoMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.REDO_ACTION));
+        cutMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.CUT_ACTION));
+        copyMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.COPY_ACTION));
+        pasteMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.PASTE_ACTION));
+        deleteMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.DELETE_ACTION));
+        selectAllMenuItem.setAction(RSyntaxTextArea.getAction(RSyntaxTextArea.SELECT_ALL_ACTION));
+        
         
     }
 
     private void runScriptAction(ActionEvent event) {
+        
         SwingUtilities.invokeLater(() -> {
-            App.getApplication().getShell().evaluate(textArea.getText());
+            GroovyShell shell = App.getApplication().getShell();
+            Script script = shell.parse(textArea.getText());
+            
+            script.setProperty("out", new ConsolePrintWriter(output));            
+            script.run();
+            script.setProperty("out", null);
         });
         
     }
 
-    private void undoListener(UndoableEditEvent event) {
-        UndoableEdit edit = event.getEdit();
-        undoMenuItem.setEnabled(edit.canUndo());
-        undoMenuItem.setText(edit.getUndoPresentationName());
-        redoMenuItem.setEnabled(edit.canRedo());
-        redoMenuItem.setText(edit.getRedoPresentationName());
-    }
+    private class ConsolePrintWriter {
 
-    private void undoAction(ActionEvent e) {
-        textArea.undoLastAction();
+        private final TextArea output;
+        
+        public ConsolePrintWriter(TextArea output) {
+            this.output = output;
+        }
+        
+        public void println() {
+            this.output.append("\n");
+        }
+        
+        public void print(Object value) {
+            output.append(value.toString());
+        }
+        
+        public void println(Object value) {
+            output.append(value.toString()+"\n");
+        }
     }
-
-    private void redoAction(ActionEvent e) {
-        textArea.redoLastAction();
-    }
+    
     
     
 }

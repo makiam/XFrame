@@ -5,7 +5,7 @@
  */
 package app.actions;
 
-import app.ScriptEditor;
+import app.LayoutWindow;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -16,18 +16,18 @@ import javax.swing.SwingUtilities;
  *
  * @author MaksK
  */
-public class ScriptEditorAction extends AbstractAction {
+public class NewViewAction extends AbstractAction {
 
-    public ScriptEditorAction() {
-        super("Script Editor");
-        this.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control T"));
+    public NewViewAction() {
+        super("New View");
+        this.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(() -> {
-            new ScriptEditor().setVisible(true);
+            new LayoutWindow().setVisible(true);
         });
     }
-
+    
 }

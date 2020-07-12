@@ -6,26 +6,27 @@ and open the template in the editor.
 -->
 
 
-<window resource="app.LayoutWindow" name="Groovy Script Editor">
+<window resource="app.LayoutWindow" name="Script Editor">
 
     <width>640</width>
     <height>480</height>
-    <defaultCloseOperation>2</defaultCloseOperation>
+    <defaultCloseOperation>0</defaultCloseOperation>
     <icon>app/ApplicationIcon.png</icon>
     
     <menu name="menu.file">
         <menuitem name="menu.file.new" actionClass="app.actions.ScriptEditorAction"/>
         <menuitem name="menu.file.open" actionClass="app.actions.LoadScriptAction"/>
     </menu>
-    <menu name="menu.edit" binding = "editMenu">
+    <menu name="menu.edit">
         
-        <menuitem name="menu.edit.undo" icon="menu.edit.undo.icon" binding="undoMenuItem" shortcut="ctrl Z"/>
-        <menuitem name="menu.edit.redo" icon="app/redo.png"  binding="redoMenuItem" shortcut="ctrl shift Z"/>
+        <menuitem name="menu.edit.undo" binding="undoMenuItem"/>
+        <menuitem name="menu.edit.redo" binding="redoMenuItem"/>
         <menuitem separator="true"/>
-        <menuitem name="menu.edit.cut" shortcut="menu.edit.cut.shortcut"/>
-        <menuitem name="menu.edit.copy" shortcut="menu.edit.copy.shortcut"/>
-        <menuitem name="menu.edit.paste" shortcut="menu.edit.paste.shortcut"/>
-        <menuitem name="menu.edit.delete"/>
+        <menuitem name="menu.edit.cut" binding="cutMenuItem"/>
+        <menuitem name="menu.edit.copy" binding="copyMenuItem"/>
+        <menuitem name="menu.edit.paste" binding="pasteMenuItem"/>
+        <menuitem name="Select All" binding="selectAllMenuItem"/>
+        <menuitem name="menu.edit.delete" binding="deleteMenuItem"/>
         
         <menuitem separator="true"/>
         <menuitem name="menu.script.run" binding="runScript" shortcut="menu.script.run.shortcut"/>
