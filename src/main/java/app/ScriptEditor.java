@@ -10,24 +10,22 @@ import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 
-import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import lombok.extern.log4j.Log4j;
+import org.codehaus.groovy.control.CompilationFailedException;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
+import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -72,7 +70,9 @@ public class ScriptEditor extends XFrame {
             this.path = path;
             backup = new String(Files.readAllBytes(path));
             textArea.setText(backup);
+            pack();
             this.setTitle("Script Editor: " + path.getFileName());
+            
         } catch(IOException ioe) {
         }
         
@@ -133,16 +133,32 @@ public class ScriptEditor extends XFrame {
     private void runScriptAction(ActionEvent event) {
         
         SwingUtilities.invokeLater(() -> {
+            output.setText("");
             GroovyShell shell = App.getApplication().getShell();
-            Script script = shell.parse(textArea.getText());
+            Script script = null;
+            try {
+                script = shell.parse(textArea.getText());
+            } catch(MultipleCompilationErrorsException mcee) {
+                mcee.getErrorCollector().getErrors().forEach(message -> {
+                    if(message instanceof SyntaxErrorMessage) {
+                        SyntaxErrorMessage sm = (SyntaxErrorMessage)message;
+                        output.append("\n" + sm.getCause().getMessage());
+                    }
+                });
+                return;
+            } catch(CompilationFailedException ex) {
+                log.error("Script syntax error", ex);
+                return;
+            }
             
             script.setProperty("out", new ConsolePrintWriter(output));            
             script.run();
+            output.append("\nDone");
             script.setProperty("out", null);
         });
         
     }
-
+    
     private class ConsolePrintWriter {
 
         private final TextArea output;
